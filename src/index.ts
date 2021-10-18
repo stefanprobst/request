@@ -1,13 +1,5 @@
 type Primitive = string | number | boolean | null | undefined
 
-type JsonSerializable =
-  | string
-  | number
-  | boolean
-  | null
-  | Array<JsonSerializable>
-  | { [key: string]: JsonSerializable }
-
 export type UrlSearchParamsInit =
   | string
   | URLSearchParams
@@ -180,7 +172,8 @@ export interface Hooks {
 
 export interface RequestOptions extends RequestInit {
   method?: HttpMethod
-  json?: JsonSerializable
+  /** Cannot use JsonSerializable type, because of https://github.com/microsoft/TypeScript/issues/15300. */
+  json?: unknown
   fetch?: (request: Request) => Promise<Response>
   timeout?: number
   responseType?: ResponseType
