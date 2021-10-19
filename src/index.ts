@@ -154,20 +154,24 @@ export type ResponseType =
   // | "content-type" /** Use `content-type` header on the `Response` to decide how to handle response type. */
   | 'stream'
 
+export interface BeforeRequestHook {
+  (request: Request, options: RequestOptions):
+    | Request
+    | Response
+    | void
+    | Promise<Request | Response | void>
+}
+
+export interface AfterResponseHook {
+  (request: Request, options: RequestOptions, response: Response):
+    | Response
+    | void
+    | Promise<Response | void>
+}
+
 export interface Hooks {
-  beforeRequest?: Array<
-    (
-      request: Request,
-      options: RequestOptions,
-    ) => Request | Response | void | Promise<Request | Response | void>
-  >
-  afterResponse?: Array<
-    (
-      request: Request,
-      options: RequestOptions,
-      response: Response,
-    ) => Response | void | Promise<Response | void>
-  >
+  beforeRequest?: Array<BeforeRequestHook>
+  afterResponse?: Array<AfterResponseHook>
 }
 
 export interface RequestOptions extends RequestInit {
