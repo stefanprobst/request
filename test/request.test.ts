@@ -44,12 +44,12 @@ test('HTTP methods', async (context) => {
 })
 
 test('JSON payload', async (context) => {
+  const payload = { key: 'value' }
+
   const url = await context.createServer((request) => {
     assert.is(request.headers['content-type'], 'application/json')
     return json(request)
   })
-
-  const payload = { key: 'value' }
 
   assert.equal(
     await request(url, {
@@ -70,11 +70,11 @@ test('JSON payload', async (context) => {
 })
 
 test('Headers', async (context) => {
+  const header = 'foo: bar'
+
   const url = await context.createServer((request) => {
     return request.headers['custom']
   })
-
-  const header = 'foo: bar'
 
   assert.is(await request(url, { headers: { custom: header }, responseType: 'text' }), header)
 })
@@ -116,6 +116,46 @@ test('500 Error', async (context) => {
     assert.instance(error, HttpError)
     assert.is((error as HttpError).response.status, 500)
   }
+})
+
+test('Response type text', async (context) => {
+  const message = 'Hello, world!'
+
+  const url = await context.createServer(() => {
+    return message
+  })
+
+  assert.is(await request(url, { responseType: 'text' }), message)
+})
+
+test('Response type json', async (context) => {
+  const message = { message: 'Hello, world!' }
+
+  const url = await context.createServer(() => {
+    return message
+  })
+
+  assert.equal(await request(url, { responseType: 'json' }), message)
+})
+
+test('Response type void', async (context) => {
+  const url = await context.createServer((request, response) => {
+    send(response, 204)
+  })
+
+  assert.is(await request(url, { responseType: 'void' }), null)
+})
+
+test('Response type undefined', async (context) => {
+  const message = 'Hello, world!'
+
+  const url = await context.createServer(() => {
+    return message
+  })
+
+  const response = await request(url, { responseType: undefined })
+  assert.instance(response, Response)
+  assert.is(await response.text(), message)
 })
 
 test('Timeout', async (context) => {

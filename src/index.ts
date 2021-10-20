@@ -153,6 +153,7 @@ export type ResponseType =
   // | "document" /** `XMLHttpRequest` (and, by extension, `axios`) support parsing the response as HTML or XML (depending on `content-type` header). */
   // | "content-type" /** Use `content-type` header on the `Response` to decide how to handle response type. */
   | 'stream'
+  | 'void'
 
 export interface BeforeRequestHook {
   (request: Request, options: RequestOptions):
@@ -180,7 +181,7 @@ export interface RequestOptions extends RequestInit {
   json?: unknown
   fetch?: (request: Request) => Promise<Response>
   timeout?: number
-  responseType?: ResponseType
+  responseType?: ResponseType | undefined
   hooks?: Hooks
   /** Custom user data, e.g. a token. Can be used in hooks. */
   context?: { [key: string]: unknown }
@@ -247,6 +248,10 @@ export async function request(input: URL | Request, init: RequestOptions = {}) {
 
   if (!response.ok) {
     throw new HttpError(request, response)
+  }
+
+  if (init.responseType === 'void') {
+    return null
   }
 
   if (init.responseType === 'stream') {
