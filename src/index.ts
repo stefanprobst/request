@@ -143,6 +143,10 @@ export const httpMethods = ['get', 'post', 'put', 'patch', 'delete', 'head', 'op
 
 export type HttpMethod = typeof httpMethods[number]
 
+export interface AuthData {
+  token?: string
+}
+
 export type ResponseType =
   | 'json'
   | 'text'
@@ -179,6 +183,7 @@ export interface RequestOptions extends RequestInit {
   method?: HttpMethod
   /** Cannot use JsonSerializable type, because of https://github.com/microsoft/TypeScript/issues/15300. */
   json?: unknown
+  auth?: AuthData
   fetch?: (request: Request) => Promise<Response>
   timeout?: number
   responseType?: ResponseType | undefined
@@ -216,6 +221,10 @@ export async function request(input: URL | Request, init: RequestOptions = {}) {
       }
       /** No need to set Accept headers for formData, arrayBuffer, blob. */
     }
+  }
+
+  if (init.auth?.token != null && !request.headers.has('authorization')) {
+    request.headers.set('authorization', init.auth.token)
   }
 
   async function fetchData() {

@@ -90,6 +90,41 @@ test('Search parameters', async (context) => {
   assert.is(await request(url, { responseType: 'text' }), url.search)
 })
 
+test('Context', async (context) => {
+  const token = 'Bearer 1234567890'
+
+  const url = await context.createServer((request) => {
+    return request.headers['authorization']
+  })
+
+  assert.is(
+    await request(url, {
+      responseType: 'text',
+      context: { token },
+      hooks: {
+        beforeRequest: [
+          function (request, options) {
+            if (options.context?.token != null) {
+              request.headers.set('authorization', options.context.token as string)
+            }
+          },
+        ],
+      },
+    }),
+    token,
+  )
+})
+
+test('Auth', async (context) => {
+  const token = 'Bearer 1234567890'
+
+  const url = await context.createServer((request) => {
+    return request.headers['authorization']
+  })
+
+  assert.is(await request(url, { responseType: 'text', auth: { token } }), token)
+})
+
 test('404 Error', async (context) => {
   const url = await context.createServer((request, response) => {
     send(response, 404)
