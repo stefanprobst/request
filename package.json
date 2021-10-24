@@ -1,14 +1,23 @@
 {
   "name": "@stefanprobst/request",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "exports": {
-    ".": "./dist/index.js",
-    "./timeout": "./dist/timeout.js",
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./timeout": {
+      "import": "./dist/timeout.js",
+      "require": "./dist/cjs/timeout.js"
+    },
     "./fetch": {
-      "node": "./dist/fetch.js"
+      "node": {
+        "import": "./dist/fetch.js",
+        "require": "./dist/cjs/fetch.js"
+      }
     }
   },
   "types": "./dist/index.d.ts",
@@ -18,10 +27,11 @@
   "sideEffects": false,
   "scripts": {
     "build": "tsc -p tsconfig.dist.json",
+    "build:cjs": "yarn run build --module commonjs --outDir dist/cjs",
     "format": "prettier . --list-different --ignore-path .gitignore --loglevel warn",
     "format:fix": "yarn run format --write",
     "prepare": "simple-git-hooks || true",
-    "prepublishOnly": "yarn run validate && yarn run build",
+    "prepublishOnly": "yarn run validate && yarn run build && yarn run build:cjs",
     "test": "cross-env NODE_OPTIONS='--experimental-vm-modules' tsm node_modules/uvu/bin.js test",
     "validate": "yarn run format && yarn run test"
   },
