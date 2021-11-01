@@ -46,9 +46,9 @@ export function mergeUrlSearchParams(source: UrlSearchParamsInit, target: URLSea
 
 export interface UrlInit {
   baseUrl: string | URL
-  pathname?: string
-  searchParams?: UrlSearchParamsInit
-  hash?: string
+  pathname?: string | undefined
+  searchParams?: UrlSearchParamsInit | undefined
+  hash?: string | undefined
 }
 
 /**
