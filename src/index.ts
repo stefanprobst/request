@@ -190,6 +190,7 @@ export interface RequestOptions extends RequestInit {
   hooks?: Hooks
   /** Custom user data, e.g. a token. Can be used in hooks. */
   context?: { [key: string]: unknown }
+  signal?: RequestInit['signal'] | undefined
 }
 
 /**
