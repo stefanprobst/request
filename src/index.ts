@@ -183,7 +183,7 @@ export interface RequestOptions extends RequestInit {
   method?: HttpMethod
   /** Cannot use JsonSerializable type, because of https://github.com/microsoft/TypeScript/issues/15300. */
   json?: unknown
-  auth?: AuthData
+  auth?: AuthData | undefined
   fetch?: (request: Request) => Promise<Response>
   timeout?: number
   responseType?: ResponseType | undefined
