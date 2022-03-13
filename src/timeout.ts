@@ -37,7 +37,7 @@ export function timeout(ms: number, abort = true, fetch = globalThis.fetch) {
         setTimeout(() => {
           reject(new TimeoutError(request))
         }, ms)
-      }),
+      }) as any,
     ]).finally(() => {
       if (timeout != null) {
         clearTimeout(timeout)
