@@ -1,7 +1,7 @@
 import { suite } from 'uvu'
 import * as assert from 'uvu/assert'
 import '../src/fetch'
-import { createRequestHeaders } from '../src/index'
+import { createRequestHeaders, mergeHeaders } from '../src/index'
 
 const test = suite('createRequestHeaders')
 
@@ -28,6 +28,20 @@ test('Filter out null and undefined values', () => {
   assert.is(headers.get('content-type'), 'text/html, text/xml')
   assert.is(headers.get('accept'), null)
   assert.is(headers.get('authorization'), null)
+})
+
+test('Merge headers', () => {
+  const headers = createRequestHeaders({
+    'content-type': ['text/html', null, undefined, 'text/xml'],
+    accept: null,
+    authorization: undefined,
+  })
+  mergeHeaders({ accept: '*/*', location: '/' }, headers)
+
+  assert.is(headers.get('content-type'), 'text/html, text/xml')
+  assert.is(headers.get('accept'), '*/*')
+  assert.is(headers.get('authorization'), null)
+  assert.is(headers.get('location'), '/')
 })
 
 test.run()

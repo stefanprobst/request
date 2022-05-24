@@ -38,7 +38,7 @@ export function createUrlSearchParams(init: UrlSearchParamsInit): URLSearchParam
  */
 export function mergeUrlSearchParams(source: UrlSearchParamsInit, target: URLSearchParams) {
   createUrlSearchParams(source).forEach((value, key) => {
-    target.append(value, key)
+    target.append(key, value)
   })
 
   return target
@@ -105,7 +105,7 @@ export function createRequestHeaders(init: RequestHeadersInit) {
  */
 export function mergeHeaders(source: RequestHeadersInit, target: Headers) {
   createRequestHeaders(source).forEach((value, key) => {
-    target.append(value, key)
+    target.append(key, value)
   })
 
   return target

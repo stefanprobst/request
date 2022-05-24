@@ -1,6 +1,6 @@
 import { suite } from 'uvu'
 import * as assert from 'uvu/assert'
-import { createUrlSearchParams } from '../src/index'
+import { createUrlSearchParams, mergeUrlSearchParams } from '../src/index'
 
 const test = suite('createUrlSearchParams')
 
@@ -20,6 +20,13 @@ test('Create URLSearchParams', () => {
     ),
     'first=first&first=second&second=second',
   )
+})
+
+test('Merge URLSearchParams', () => {
+  const searchParams = createUrlSearchParams({ one: '1', two: '2', other: [1] })
+  mergeUrlSearchParams({ three: '3', other: [2] }, searchParams)
+
+  assert.is(String(searchParams), 'one=1&two=2&other=1&three=3&other=2')
 })
 
 test.run()
