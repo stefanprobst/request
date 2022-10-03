@@ -29,18 +29,18 @@ export function timeout(ms: number, abort = true, fetch = globalThis.fetch) {
       request = new Request(request, { signal: controller.signal })
     }
 
-    let timeout: ReturnType<typeof setTimeout> | null = null
+    let timer: ReturnType<typeof setTimeout> | null = null
 
     return Promise.race<Promise<Response>>([
       fetch(request),
       new Promise((resolve, reject) => {
-        setTimeout(() => {
+        timer = setTimeout(() => {
           reject(new TimeoutError(request))
         }, ms)
       }) as any,
     ]).finally(() => {
-      if (timeout != null) {
-        clearTimeout(timeout)
+      if (timer != null) {
+        clearTimeout(timer)
       }
     })
   }
