@@ -70,7 +70,7 @@ export function createUrl(init: UrlInit): URL {
 
 export type RequestHeadersInit =
   | Headers
-  | Array<Array<string>>
+  | Array<[string, string]>
   | Record<string, Primitive | Array<Primitive>>
 
 /**
