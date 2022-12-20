@@ -1,80 +1,78 @@
 {
-  "name": "@stefanprobst/request",
-  "version": "0.2.1",
-  "license": "MIT",
-  "type": "module",
-  "main": "./dist/cjs/index.js",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/cjs/index.js"
-    },
-    "./timeout": {
-      "import": "./dist/timeout.js",
-      "require": "./dist/cjs/timeout.js"
-    },
-    "./fetch": {
-      "node": {
-        "import": "./dist/fetch.js",
-        "require": "./dist/cjs/fetch.js"
-      }
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "sideEffects": false,
-  "scripts": {
-    "build": "tsc -p tsconfig.dist.json",
-    "build:cjs": "npm run build -- --module commonjs --outDir dist/cjs && sh scripts/fix-package-type.sh",
-    "format": "prettier . --cache --check --ignore-path .gitignore",
-    "format:fix": "npm run format -- --write",
-    "prepare": "npm run setup",
-    "prepublishOnly": "run-s validate build build:cjs",
-    "setup": "simple-git-hooks || exit 0",
-    "test": "uvu -r tsm test",
-    "typecheck": "tsc --noEmit -p tsconfig.dist.json",
-    "validate": "run-s format typecheck test"
-  },
-  "engines": {
-    "node": ">=16"
-  },
-  "optionalDependencies": {
-    "abort-controller": "^3.0.0",
-    "form-data": "^4.0.0",
-    "node-fetch": "^3.2.10"
-  },
-  "devDependencies": {
-    "@commitlint/cli": "^17.1.2",
-    "@stefanprobst/commitlint-config": "^1.0.2",
-    "@stefanprobst/prettier-config": "^2.0.2",
-    "@types/micro": "^7.3.7",
-    "@types/node": "^16.11.63",
-    "abort-controller": "^3.0.0",
-    "cross-env": "^7.0.3",
-    "form-data": "^4.0.0",
-    "lint-staged": "^13.0.3",
-    "micro": "^9.4.1",
-    "node-fetch": "^3.2.10",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^2.7.1",
-    "simple-git-hooks": "^2.8.0",
-    "tsm": "^2.2.2",
-    "typescript": "^4.8.4",
-    "uvu": "^0.5.6"
-  },
-  "commitlint": {
-    "extends": "@stefanprobst/commitlint-config"
-  },
-  "lint-staged": {
-    "*.@(js|ts)": [
-      "prettier --write"
-    ]
-  },
-  "prettier": "@stefanprobst/prettier-config",
-  "simple-git-hooks": {
-    "commit-msg": "npx commitlint --edit",
-    "pre-commit": "npx lint-staged",
-    "pre-push": "npm run validate"
-  }
+	"name": "@stefanprobst/request",
+	"version": "0.2.1",
+	"license": "MIT",
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		"types": "./dist/index.d.ts",
+		"default": "./dist/index.modern.js"
+	},
+	"files": [
+		"dist"
+	],
+	"sideEffects": false,
+	"scripts": {
+		"build": "rm -rf dist && microbundle --format cjs,modern ./src/index.ts",
+		"changeset:add": "changeset add",
+		"changeset:status": "changeset status --verbose",
+		"ci:release": "pnpm run build && changeset publish",
+		"format:check": "prettier . --cache --check --ignore-path .gitignore",
+		"format:fix": "pnpm run format:check --write",
+		"lint:check": "eslint . --cache --ignore-path .gitignore",
+		"lint:fix": "pnpm run lint:check --fix",
+		"prepare": "run-s setup",
+		"prepublishOnly": "run-s validate build",
+		"setup": "simple-git-hooks || exit 0",
+		"test": "uvu -r tsm test",
+		"types:check": "tsc --noEmit",
+		"validate": "run-s format:check lint:check types:check test"
+	},
+	"engines": {
+		"node": ">=18",
+		"pnpm": ">=7"
+	},
+	"packageManager": "pnpm@7.18.1",
+	"devDependencies": {
+		"@changesets/changelog-github": "^0.4.8",
+		"@changesets/cli": "^2.26.0",
+		"@commitlint/cli": "^17.3.0",
+		"@stefanprobst/commitlint-config": "^1.0.3",
+		"@stefanprobst/eslint-config": "^1.0.10",
+		"@stefanprobst/eslint-config-node": "^4.0.0",
+		"@stefanprobst/prettier-config": "^3.0.0",
+		"@types/node": "^18.11.17",
+		"eslint": "^8.30.0",
+		"lint-staged": "^13.1.0",
+		"microbundle": "^0.15.1",
+		"npm-run-all": "^4.1.5",
+		"prettier": "^2.8.1",
+		"simple-git-hooks": "^2.8.1",
+		"tsm": "^2.3.0",
+		"typescript": "^4.9.4",
+		"uvu": "^0.5.6"
+	},
+	"commitlint": {
+		"extends": "@stefanprobst/commitlint-config"
+	},
+	"eslintConfig": {
+		"extends": [
+			"@stefanprobst/eslint-config",
+			"@stefanprobst/eslint-config-node"
+		]
+	},
+	"lint-staged": {
+		"*.ts": [
+			"eslint --cache --fix",
+			"prettier --cache --write"
+		],
+		"*.!(ts)": "prettier --cache --ignore-unknown --write"
+	},
+	"prettier": "@stefanprobst/prettier-config",
+	"simple-git-hooks": {
+		"commit-msg": "pnpm exec commitlint --edit",
+		"pre-commit": "pnpm exec lint-staged",
+		"pre-push": "pnpm run validate"
+	}
 }
